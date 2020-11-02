@@ -18,7 +18,7 @@ IF NOT EXISTS(
         [id] INT IDENTITY(1,1) PRIMARY KEY,
         [color] NVARCHAR(20) NOT NULL,
         [dateFirstCirculation] DATETIME2,
-        [kilometrage] FLOAT ,
+        [kilometrage] FLOAT NOT NULL,
         [disponibilite] BIT, 
     )
 
@@ -31,11 +31,11 @@ IF NOT EXISTS(
             AND [xtype] = 'u'
 )
 CREATE TABLE [dbo].[client](
-        [nom] NVARCHAR(20),
-        [prenom] NVARCHAR(20),
-        [adresse] NVARCHAR(50),
-        [telephone] INT,
-        [typePermis] INT, 
+        [nom] NVARCHAR(20) NOT NULL,
+        [prenom] NVARCHAR(20) NOT NULL,
+        [adresse] NVARCHAR(50) NOT NULL,
+        [telephone] INT NOT NULL,
+        [typePermis] INT NOT NULL, 
     )
 
 GO
@@ -48,15 +48,15 @@ IF NOT EXISTS(
 )
 
     CREATE TABLE [dbo].[modele](
-        [marque] NVARCHAR,
-        [modele] NVARCHAR,
-        [vitesseMax] INT,
-        [poids] FLOAT,
-        [puissance] INT,
-        [anneeSortieUsine] DATE,
-        [type] NVARCHAR, 
-        [place] INT,
-        [energie] NVARCHAR,
+        [marque] NVARCHAR NOT NULL,
+        [modele] NVARCHAR NOT NULL,
+        [vitesseMax] INT NOT NULL,
+        [poids] FLOAT NOT NULL,
+        [puissance] INT NOT NULL,
+        [anneeSortieUsine] DATE NOT NULL,
+        [type] NVARCHAR NOT NULL, 
+        [place] INT NOT NULL,
+        [energie] NVARCHAR NOT NULL,
     )
 
 GO
