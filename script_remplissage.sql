@@ -1,3 +1,4 @@
+--En cours d'édition--
 IF NOT EXISTS (
     SELECT TOP 1 [Id]
     FROM [dbo].[Post_PST]
