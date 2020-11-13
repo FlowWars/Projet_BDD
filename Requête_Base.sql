@@ -31,9 +31,10 @@ IF NOT EXISTS(
             AND [xtype] = 'u'
 )
 CREATE TABLE [dbo].[client](
+        [id] INT IDENTITY(1,1) PRIMARY KEY,
         [nom_client] NVARCHAR(20) NOT NULL,
         [prenom_client] NVARCHAR(20) NOT NULL,
-        [adresse] NVARCHAR(50) NOT NULL,
+        [adresse_client] NVARCHAR(50) NOT NULL,
         [telephone_client] INT NOT NULL,
         [type_permis_client] INT NOT NULL, 
     )
@@ -48,6 +49,7 @@ IF NOT EXISTS(
 )
 
     CREATE TABLE [dbo].[modele](
+        [id] INT IDENTITY(1,1) PRIMARY KEY,
         [marque_vehicule] NVARCHAR(20) NOT NULL,
         [modele_vehicule] NVARCHAR(20) NOT NULL,
         [vitesse_max_vehicule] INT NOT NULL,
