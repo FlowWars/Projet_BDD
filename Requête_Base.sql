@@ -16,10 +16,10 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule](
         [id] INT IDENTITY(1,1) PRIMARY KEY,
-        [color] NVARCHAR(20) NOT NULL,
-        [dateFirstCirculation] DATETIME2,
-        [kilometrage] FLOAT NOT NULL,
-        [disponibilite] BIT, 
+        [couleur_vehicule] NVARCHAR(20) NOT NULL,
+        [premiere_mise_en_circulation] DATETIME2,
+        [kilometre_vehicule] FLOAT NOT NULL,
+        [disponibilite_vehicule] BIT, 
     )
 
 GO
@@ -31,11 +31,11 @@ IF NOT EXISTS(
             AND [xtype] = 'u'
 )
 CREATE TABLE [dbo].[client](
-        [nom] NVARCHAR(20) NOT NULL,
-        [prenom] NVARCHAR(20) NOT NULL,
+        [nom_client] NVARCHAR(20) NOT NULL,
+        [prenom_client] NVARCHAR(20) NOT NULL,
         [adresse] NVARCHAR(50) NOT NULL,
-        [telephone] INT NOT NULL,
-        [typePermis] INT NOT NULL, 
+        [telephone_client] INT NOT NULL,
+        [type_permis_client] INT NOT NULL, 
     )
 
 GO
