@@ -48,15 +48,15 @@ IF NOT EXISTS(
 )
 
     CREATE TABLE [dbo].[modele](
-        [marque] NVARCHAR(20) NOT NULL,
-        [modele] NVARCHAR(20) NOT NULL,
-        [vitesseMax] INT NOT NULL,
-        [poids] FLOAT NOT NULL,
-        [puissance] INT NOT NULL,
-        [anneeSortieUsine] DATE NOT NULL,
-        [type] NVARCHAR(15) NOT NULL, 
-        [place] INT NOT NULL,
-        [energie] NVARCHAR(10) NOT NULL,
+        [marque_vehicule] NVARCHAR(20) NOT NULL,
+        [modele_vehicule] NVARCHAR(20) NOT NULL,
+        [vitesse_max_vehicule] INT NOT NULL,
+        [poids_vehicule] FLOAT NOT NULL,
+        [puissance_vehicule] INT NOT NULL,
+        [annee_sortie_usine_vehicule] DATE NOT NULL,
+        [type_vehicule] NVARCHAR(15) NOT NULL, 
+        [place_vehicule] INT NOT NULL,
+        [energie_vehicule] NVARCHAR(10) NOT NULL,
     )
 
 GO
