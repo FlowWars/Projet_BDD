@@ -36,7 +36,7 @@ CREATE TABLE [dbo].[client](
         [prenom_client] NVARCHAR(20) NOT NULL,
         [adresse_client] NVARCHAR(50) NOT NULL,
         [telephone_client] INT NOT NULL,
-        [type_permis_client] INT NOT NULL, 
+        [type_permis_client] NVARCHAR(1) NOT NULL, 
     )
 
 GO
