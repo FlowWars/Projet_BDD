@@ -25,8 +25,8 @@ IF NOT EXISTS(
 )
 BEGIN
 	INSERT INTO [parc_auto].[dbo].[modele] ([marque_vehicule], [modele_vehicule], [vitesse_max_vehicule], [poids_vehicule], [puissance_vehicule], [annee_sortie_usine_vehicule],[type_vehicule],[place_vehicule],[energie_vehicule])
-    VALUES  (N'mercedes', N'classe_A', 320, 1500,300,2018,N'sport',4,N'essence'),
-            (N'bmw', N'M5', 280, 1300,240,2015,N'break',4,N'gazole')
+    VALUES  (N'mercedes', N'classe_A', 320, 1500,300,N'2018-10-23',N'sport',4,N'essence'),
+            (N'bmw', N'M5', 280, 1300,240,N'2015-02-17',N'break',4,N'gazole')
 
     DELETE FROM [dbo].[modele]
     WHERE       [id] = 1;
