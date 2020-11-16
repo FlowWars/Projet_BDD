@@ -63,3 +63,35 @@ IF NOT EXISTS(
 
 GO
 
+GO
+	IF NOT EXISTS(
+    SELECT [name]
+    FROM [sysobjects]
+    WHERE [name] = 'location'
+            AND [xtype] = 'u'
+)   
+
+	CREATE TABLE [dbo].[location](
+        [id] INT IDENTITY(1,1) PRIMARY KEY,
+        [idVehicule] INT /*clé secondaire */,
+        [idClient] INT /*clé secondaire*/,
+        [dateDebutLocation] DATETIME2,
+        [DateFinLocation] DATETIME2,
+        [disponibilite] BIT,
+ 
+    )
+
+GO
+
+GO
+	ALTER TABLE [dbo].[location]
+	ADD CONSTRAINT FK_LOC_VEH FOREIGN KEY([idVehicule])
+	REFERENCES [dbo].[vehicule]([id])
+GO
+
+GO
+	ALTER TABLE [dbo].[location]
+	ADD CONSTRAINT FK_LOC_VEH FOREIGN KEY([idClient])
+	REFERENCES [dbo].[client]([id])
+GO
+ 
