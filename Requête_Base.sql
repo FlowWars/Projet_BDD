@@ -73,10 +73,10 @@ GO
 
 	CREATE TABLE [dbo].[location](
         [id] INT IDENTITY(1,1) PRIMARY KEY,
-        [idVehicule] INT /*clé secondaire */,
-        [idClient] INT /*clé secondaire*/,
-        [dateDebutLocation] DATETIME2,
-        [DateFinLocation] DATETIME2,
+        [idVehicule] INT /*clÃ© secondaire */,
+        [idClient] INT /*clÃ© secondaire*/,
+        [date_debut_location] DATETIME2,
+        [date_fin_location] DATETIME2,
         [disponibilite] BIT,
  
     )
