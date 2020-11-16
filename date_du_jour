@@ -1,0 +1,19 @@
+IF NOT EXISTS(
+    SELECT [name]
+    FROM [sysobjects]
+    WHERE [name] = 'date'
+            AND [xtype] = 'u'
+)
+
+    CREATE TABLE [dbo].[date](
+        [date_du_jour] DATETIME2 PRIMARY KEY,
+    )
+
+GO
+
+UPDATE  [dbo].[location]
+    SET     [disponibilite] = '0'
+    WHERE   [date_debut_location] = [date_du_jour]
+END
+
+GO
