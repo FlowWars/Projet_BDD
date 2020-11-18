@@ -1,0 +1,13 @@
+IF NOT EXISTS(
+    SELECT [name]
+    FROM [sysobjects]
+    WHERE [name] = 'date'
+            AND [xtype] = 'u'
+)
+
+    CREATE TABLE [dbo].[date](
+		[id_date] INT IDENTITY(1,1) PRIMARY KEY,
+        [date_du_jour] DATETIME2,
+    )
+
+GO
