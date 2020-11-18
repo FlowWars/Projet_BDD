@@ -19,7 +19,6 @@ IF NOT EXISTS(
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATETIME2,
         [kilometre_vehicule] FLOAT NOT NULL,
-        [disponibilite_vehicule] BIT, 
     )
 
 GO
