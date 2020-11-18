@@ -6,14 +6,8 @@ IF NOT EXISTS(
 )
 
     CREATE TABLE [dbo].[date](
-        [date_du_jour] DATETIME2 PRIMARY KEY,
+		[id_date] INT IDENTITY(1,1) PRIMARY KEY,
+        [date_du_jour] DATETIME2,
     )
-
-GO
-
-UPDATE  [dbo].[location]
-    SET     [disponibilite] = '0'
-    WHERE   [date_debut_location] = [date_du_jour]
-END
 
 GO
