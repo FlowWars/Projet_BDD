@@ -16,7 +16,7 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clé secondaire*/
+		[id_modele_fk] INT,/*clÃ© secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATETIME2,
         [kilometre_vehicule] FLOAT NOT NULL,
@@ -64,6 +64,7 @@ IF NOT EXISTS(
 
 GO
 
+GO
 	IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
@@ -73,8 +74,8 @@ GO
 
 	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clé secondaire */,
-        [id_client_fk] INT /*clé secondaire*/,
+        [id_vehicule_fk] INT /*clÃ© secondaire */,
+        [id_client_fk] INT /*clÃ© secondaire*/,
         [date_debut_location] DATETIME2,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
@@ -82,11 +83,13 @@ GO
     )
 
 GO
-
+/*
+GO
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD CONSTRAINT FK_VEH_IDMOD FOREIGN KEY([id_modele_fk])
 	REFERENCES [dbo].[modele_MOD]([id_modele])
 GO
+*/
 
 IF NOT EXISTS (
     SELECT TOP 1 [id_vehicule]
@@ -131,32 +134,23 @@ BEGIN
     WHERE       [id_client] = 1;
 
 END
-
+/*
 GO
 	ALTER TABLE [dbo].[location_LOC]
 	ADD CONSTRAINT FK_LOC_VEH FOREIGN KEY([id_vehicule_fk])
 	REFERENCES [dbo].[vehicule_VEH]([id_vehicule])
 GO
 
+GO
 	ALTER TABLE [dbo].[location_LOC]
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client_CLI]([id_client])
 GO
+*/
 
-IF NOT EXISTS(
-    SELECT [name]
-    FROM [sysobjects]
-    WHERE [name] = 'date_DAT'
-            AND [xtype] = 'u'
-)
 
-    CREATE TABLE [dbo].[date_DAT](
-		[id_date] INT IDENTITY(1,1) PRIMARY KEY,
-        [date_du_jour] DATETIME2,
-    )
 
 GO
-
 UPDATE  [dbo].[location_LOC]
     SET     [disponibilite] = '0'
     WHERE   [date_debut_location] = GETDATE()
@@ -169,3 +163,17 @@ FROM [dbo].[vehicule_VEH] AS [vhc](NOLOCK)
 WHERE [id_vehicule]=(SELECT [id_vehicule_fk] FROM [location_LOC] WHERE [disponibilite]=1)
 
 GO
+
+
+
+GO
+	ALTER TABLE [dbo].[vehicule_VEH]
+	ADD [kilometre_acquisition] DATETIME2
+	
+GO
+
+GO
+	ALTER TABLE [dbo].[vehicule_VEH]
+	DROP COLUMN [kilometre_vehicule]
+GO
+
