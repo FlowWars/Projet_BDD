@@ -87,7 +87,7 @@ GO
 GO
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD CONSTRAINT FK_VEH_IDMOD FOREIGN KEY([id_modele_fk])
-	REFERENCES [dbo].[modele]([id_modele])
+	REFERENCES [dbo].[modele_MOD]([id_modele])
 GO
 */
 IF NOT EXISTS (
