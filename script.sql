@@ -16,6 +16,7 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
+		[id_modele_fk] INT,/*clé secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATETIME2,
         [kilometre_vehicule] FLOAT NOT NULL,
@@ -82,7 +83,13 @@ GO
     )
 
 GO
-
+/*
+GO
+	ALTER TABLE [dbo].[vehicule]
+	ADD CONSTRAINT FK_VEH_IDMOD FOREIGN KEY([id_modele_fk])
+	REFERENCES [dbo].[modele]([id_modele])
+GO
+*/
 IF NOT EXISTS (
     SELECT TOP 1 [id_vehicule]
     FROM [dbo].[vehicule]
@@ -126,18 +133,19 @@ BEGIN
     WHERE       [id_client] = 1;
 
 END
-
+/*
 GO
-
 	ALTER TABLE [dbo].[location]
 	ADD CONSTRAINT FK_LOC_VEH FOREIGN KEY([id_vehicule_fk])
 	REFERENCES [dbo].[vehicule]([id_vehicule])
+GO
 
+GO
 	ALTER TABLE [dbo].[location]
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client]([id_client])
 GO
-
+*/
 IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
@@ -166,3 +174,5 @@ FROM [dbo].[vehicule] AS [vhc](NOLOCK)
 WHERE [id_vehicule]=(SELECT [id_vehicule_fk] FROM [location] WHERE [disponibilite]=1)
 
 GO
+
+
