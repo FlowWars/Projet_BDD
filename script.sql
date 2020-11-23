@@ -18,7 +18,7 @@ IF NOT EXISTS(
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
 		[id_modele_fk] INT,/*clé secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
-        [premiere_mise_en_circulation] DATETIME2,
+        [premiere_mise_en_circulation] DATETIME2 NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
         [disponibilite_vehicule] BIT, 
     )
@@ -76,7 +76,7 @@ GO
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
         [id_vehicule_fk] INT /*clé secondaire */,
         [id_client_fk] INT /*clé secondaire*/,
-        [date_debut_location] DATETIME2,
+        [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
  
@@ -103,8 +103,8 @@ GO
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client_CLI]([id_client])
 GO
-*/
 
+*/
 
 
 GO
@@ -125,7 +125,7 @@ GO
 /*
 GO
 	ALTER TABLE [dbo].[vehicule_VEH]
-	ADD [kilometre_acquisition] DATETIME2
+	ADD [kilometre_acquisition] FLOAT
 	
 GO
 
@@ -141,8 +141,8 @@ IF NOT EXISTS (
 )
 BEGIN
     INSERT INTO [parc_auto].[dbo].[vehicule_VEH] ([couleur_vehicule],[id_modele_fk] , [premiere_mise_en_circulation], [kilometre_acquisition], [disponibilite_vehicule])
-	VALUES  (N'Rouge', 2,CAST('2007-05-08 12:35:29. 1234567 +12:15' AS datetime2(7)), 1200, 1),
-            (N'Verte', 1,CAST('2007-05-08 12:35:29. 1234567 +12:15' AS datetime2(7)) , 1500.35, 0)
+	VALUES  (N'Rouge', 2,GETDATE(), 1200, 1),
+            (N'Verte', 1,GETDATE(), 1500.35, 0)
 
    
 END
