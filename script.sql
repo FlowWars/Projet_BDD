@@ -16,7 +16,7 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clé secondaire*/
+		[id_modele_fk] INT,/*clÃ© secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
@@ -73,8 +73,8 @@ GO
 
 	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clé secondaire */,
-        [id_client_fk] INT /*clé secondaire*/,
+        [id_vehicule_fk] INT /*clÃ© secondaire */,
+        [id_client_fk] INT /*clÃ© secondaire*/,
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
@@ -206,4 +206,8 @@ GO
 
 SELECT * FROM [dbo].[ModeleInfo]
 
+GO
+
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
+
+GO
