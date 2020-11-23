@@ -163,6 +163,18 @@ BEGIN
 			(N'Holland', N'Francois', N'9 rue du general foy, Amiens 80000', N' 0758962512',N'B')
            
 END
+
+GO
+IF NOT EXISTS(
+    SELECT TOP 1 [id_location]
+    FROM [dbo].[location_LOC]
+)
+BEGIN
+    INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehicule_fk],[id_client_fk],[date_debut_location],[date_fin_location],[disponibilite])
+    VALUES    (2,3,GETDATE(),GETDATE(),1),
+            (1,2,GETDATE(),GETDATE(),0)
+           
+END
 GO
 
 CREATE OR ALTER VIEW [dbo].[VehiculeInfo]
@@ -193,3 +205,5 @@ AS
 GO
 
 SELECT * FROM [dbo].[ModeleInfo]
+
+SELECT * FROM [dbo].[VuesDesVehiculeDispo]
