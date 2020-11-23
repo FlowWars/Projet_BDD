@@ -16,9 +16,9 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clÃ© secondaire*/
+		[id_modele_fk] INT,/*clé secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
-        [premiere_mise_en_circulation] DATETIME2 NOT NULL,
+        [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
         [disponibilite_vehicule] BIT, 
     )
@@ -64,7 +64,6 @@ IF NOT EXISTS(
 
 GO
 
-GO
 	IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
@@ -74,8 +73,8 @@ GO
 
 	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clÃ© secondaire */,
-        [id_client_fk] INT /*clÃ© secondaire*/,
+        [id_vehicule_fk] INT /*clé secondaire */,
+        [id_client_fk] INT /*clé secondaire*/,
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
@@ -84,27 +83,22 @@ GO
 
 GO
 /*
-GO
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD CONSTRAINT FK_VEH_IDMOD FOREIGN KEY([id_modele_fk])
 	REFERENCES [dbo].[modele_MOD]([id_modele])
 GO
 
-
-
-GO
 	ALTER TABLE [dbo].[location_LOC]
 	ADD CONSTRAINT FK_LOC_VEH FOREIGN KEY([id_vehicule_fk])
 	REFERENCES [dbo].[vehicule_VEH]([id_vehicule])
 GO
 
-GO
 	ALTER TABLE [dbo].[location_LOC]
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client_CLI]([id_client])
 GO
-
 */
+
 
 
 GO
@@ -123,13 +117,11 @@ GO
 
 
 /*
-GO
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD [kilometre_acquisition] FLOAT
 	
 GO
 
-GO
 	ALTER TABLE [dbo].[vehicule_VEH]
 	DROP COLUMN [kilometre_vehicule]
 GO
@@ -141,8 +133,8 @@ IF NOT EXISTS (
 )
 BEGIN
     INSERT INTO [parc_auto].[dbo].[vehicule_VEH] ([couleur_vehicule],[id_modele_fk] , [premiere_mise_en_circulation], [kilometre_acquisition], [disponibilite_vehicule])
-	VALUES  (N'Rouge', 2,GETDATE(), 1200, 1),
-            (N'Verte', 1,GETDATE(), 1500.35, 0)
+	VALUES  (N'Rouge', 2, N'2010-09-07', 1200, 1),
+            (N'Verte', 1, N'2017-02-25', 1500.35, 0)
 
    
 END
@@ -158,8 +150,6 @@ BEGIN
     VALUES  (N'mercedes', N'classe_A', 320, 1500,300,N'2018-10-23',N'sport',4,N'essence'),
             (N'bmw', N'M5', 280, 1300,240,N'2015-02-17',N'break',4,N'gazole')
 
-   
-
 END
 GO
 
@@ -172,8 +162,6 @@ BEGIN
     VALUES  (N'Sarkozy', N'Nicolas', N'10 rue du general foy, Amiens 80000', N' 0607080910',N'B'),
 			(N'Holland', N'Francois', N'9 rue du general foy, Amiens 80000', N' 0758962512',N'B')
            
-
-
 END
 GO
 
@@ -205,4 +193,3 @@ AS
 GO
 
 SELECT * FROM [dbo].[ModeleInfo]
-
