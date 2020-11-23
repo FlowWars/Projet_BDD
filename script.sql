@@ -16,11 +16,11 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clÃ© secondaire*/
+		[id_modele_fk] INT,/*clé secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
-        [disponibilite_vehicule] BIT, 
+        
     )
 
 GO
@@ -73,16 +73,16 @@ GO
 
 	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clÃ© secondaire */,
-        [id_client_fk] INT /*clÃ© secondaire*/,
+        [id_vehicule_fk] INT /*clé secondaire */,
+        [id_client_fk] INT /*clé secondaire*/,
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
  
     )
-
-GO
 /*
+GO
+
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD CONSTRAINT FK_VEH_IDMOD FOREIGN KEY([id_modele_fk])
 	REFERENCES [dbo].[modele_MOD]([id_modele])
@@ -96,27 +96,22 @@ GO
 	ALTER TABLE [dbo].[location_LOC]
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client_CLI]([id_client])
-GO
 */
 
 
 
+/*
 GO
 UPDATE  [dbo].[location_LOC]
-    SET     [disponibilite] = '0'
+    SET     [disponibilite] = 0
     WHERE   [date_debut_location] = GETDATE()
-GO
-
-CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
-AS
-SELECT * 
-FROM [dbo].[vehicule_VEH] AS [vhc](NOLOCK)
-WHERE [id_vehicule]=(SELECT [id_vehicule_fk] FROM [location_LOC] WHERE [disponibilite]=1)
-
-GO
-
+*/	
 
 /*
+GO
+
+
+
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD [kilometre_acquisition] FLOAT
 	
@@ -124,17 +119,18 @@ GO
 
 	ALTER TABLE [dbo].[vehicule_VEH]
 	DROP COLUMN [kilometre_vehicule]
-GO
 */
+GO
+
 
 IF NOT EXISTS (
     SELECT TOP 1 [id_vehicule]
     FROM [dbo].[vehicule_VEH]
 )
 BEGIN
-    INSERT INTO [parc_auto].[dbo].[vehicule_VEH] ([couleur_vehicule],[id_modele_fk] , [premiere_mise_en_circulation], [kilometre_acquisition], [disponibilite_vehicule])
-	VALUES  (N'Rouge', 2, N'2010-09-07', 1200, 1),
-            (N'Verte', 1, N'2017-02-25', 1500.35, 0)
+    INSERT INTO [parc_auto].[dbo].[vehicule_VEH] ([couleur_vehicule],[id_modele_fk] , [premiere_mise_en_circulation], [kilometre_acquisition])
+	VALUES  (N'Rouge', 2, N'2010-09-07', 1200),
+            (N'Verte', 1, N'2017-02-25', 1500.3)
 
    
 END
@@ -176,6 +172,13 @@ BEGIN
            
 END
 GO
+CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
+AS
+SELECT * 
+FROM [dbo].[vehicule_VEH]
+WHERE [id_vehicule]!=(SELECT[id_vehicule_fk] FROM [dbo].[location_LOC] WHERE [disponibilite]=0)
+
+GO
 
 CREATE OR ALTER VIEW [dbo].[VehiculeInfo]
 AS
@@ -206,8 +209,4 @@ GO
 
 SELECT * FROM [dbo].[ModeleInfo]
 
-GO
-
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
-
-GO
