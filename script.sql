@@ -16,7 +16,7 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clé secondaire*/
+		[id_modele_fk] INT,/*clÃ© secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
@@ -64,7 +64,7 @@ IF NOT EXISTS(
 
 GO
 
-	IF NOT EXISTS(
+IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
     WHERE [name] = 'location_LOC'
@@ -73,14 +73,14 @@ GO
 
 	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clé secondaire */,
-        [id_client_fk] INT /*clé secondaire*/,
+        [id_vehicule_fk] INT /*clÃ© secondaire */,
+        [id_client_fk] INT /*clÃ© secondaire*/,
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
  
     )
-/*
+
 GO
 
 	ALTER TABLE [dbo].[vehicule_VEH]
@@ -96,18 +96,17 @@ GO
 	ALTER TABLE [dbo].[location_LOC]
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client_CLI]([id_client])
-*/
 
 
 
-/*
+
 GO
 UPDATE  [dbo].[location_LOC]
     SET     [disponibilite] = 0
     WHERE   [date_debut_location] = GETDATE()
-*/	
+	
 
-/*
+
 GO
 
 
@@ -119,7 +118,7 @@ GO
 
 	ALTER TABLE [dbo].[vehicule_VEH]
 	DROP COLUMN [kilometre_vehicule]
-*/
+
 GO
 
 
