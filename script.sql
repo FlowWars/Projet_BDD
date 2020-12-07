@@ -16,7 +16,7 @@ IF NOT EXISTS(
 
     CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clÃ© secondaire*/
+		[id_modele_fk] INT,/*clé secondaire*/
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
@@ -73,13 +73,11 @@ IF NOT EXISTS(
 
 	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clÃ© secondaire */,
-        [id_client_fk] INT /*clÃ© secondaire*/,
-		[kilometre_parcouru] FLOAT,
+        [id_vehicule_fk] INT /*clé secondaire */,
+        [id_client_fk] INT /*clé secondaire*/,
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
-		
  
     )
 
@@ -99,15 +97,17 @@ GO
 	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
 	REFERENCES [dbo].[client_CLI]([id_client])
 
-
-
-
 GO
-UPDATE  [dbo].[location_LOC]
-    SET     [disponibilite] = 0
-    WHERE   [date_debut_location] = GETDATE()
-	
 
+CREATE OR ALTER TRIGGER [dbo].[trig_debut_location]
+    ON [dbo].[location_LOC] 
+    AFTER UPDATE 
+AS
+BEGIN
+	UPDATE  [dbo].[location_LOC]
+		SET     [disponibilite] = 0
+		WHERE   [date_debut_location] = GETDATE()
+END
 
 GO
 
@@ -211,18 +211,3 @@ GO
 SELECT * FROM [dbo].[ModeleInfo]
 
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
-
-GO
-
-CREATE FUNCTION [dbo.kilometreId]() RETURNS INTEGER AS 
-BEGIN
-	DECLARE @kilometre int;
-	SELECT @kilometre 
-	FROM [dbo].[vehicule_VEH]
-	WHERE vehicule_VEH.id_vehicule=(SELECT kilometre_parcouru FROM location_LOC
-	RETURN @kilometre
-END;
-
-
-
-
