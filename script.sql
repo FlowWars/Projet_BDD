@@ -75,9 +75,11 @@ IF NOT EXISTS(
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
         [id_vehicule_fk] INT /*clé secondaire */,
         [id_client_fk] INT /*clé secondaire*/,
+		[kilometre_parcouru] FLOAT,
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
+		
  
     )
 
@@ -209,3 +211,18 @@ GO
 SELECT * FROM [dbo].[ModeleInfo]
 
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
+
+GO
+
+CREATE FUNCTION [dbo.kilometreId]() RETURNS INTEGER AS 
+BEGIN
+	DECLARE @kilometre int;
+	SELECT @kilometre 
+	FROM [dbo].[vehicule_VEH]
+	WHERE vehicule_VEH.id_vehicule=(SELECT kilometre_parcouru FROM location_LOC
+	RETURN @kilometre
+END;
+
+
+
+
