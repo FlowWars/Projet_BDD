@@ -78,6 +78,7 @@ IF NOT EXISTS(
         [date_debut_location] DATETIME2 ,
         [date_fin_location] DATETIME2,
         [disponibilite] BIT,
+		[kilometre_parcouru] FLOAT,
  
     )
 
@@ -209,5 +210,22 @@ AS
 GO
 
 SELECT * FROM [dbo].[ModeleInfo]
-
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
+
+GO
+
+CREATE FUNCTION [dbo].[kilometreId](@ID int) RETURNS INTEGER AS 
+BEGIN
+
+    DECLARE @kilometre int;
+    SELECT @kilometre = SUM([kilometre_parcouru]) 
+    FROM [dbo].[location_LOC]
+    WHERE [location_LOC].[id_vehicule_fk] = @ID;
+    
+	SELECT @kilometre = @kilometre + [vehicule_VEH].[kilometre_acquisition]
+	FROM [dbo].[vehicule_VEH]
+	WHERE [vehicule_VEH].[id_vehicule] = @ID;
+	
+	RETURN(@kilometre)
+
+END;
