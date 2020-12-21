@@ -216,7 +216,6 @@ GO
 
 CREATE FUNCTION [dbo].[kilometreId](@ID int) RETURNS INTEGER AS 
 BEGIN
-
     DECLARE @kilometre int;
     SELECT @kilometre = SUM([kilometre_parcouru]) 
     FROM [dbo].[location_LOC]
@@ -227,5 +226,4 @@ BEGIN
 	WHERE [vehicule_VEH].[id_vehicule] = @ID;
 	
 	RETURN(@kilometre)
-
 END;
