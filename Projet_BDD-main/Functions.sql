@@ -2,11 +2,6 @@ USE [parc_auto]
 
 GO
 
-ALTER TABLE [dbo].[vehicule_VEH]
-ADD [kilometre_acquisition] FLOAT
-
-GO
-
 CREATE OR ALTER FUNCTION [dbo].[KmDepuisAcquisition]()
 RETURNS FLOAT
 AS
