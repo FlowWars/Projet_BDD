@@ -1,15 +1,15 @@
--- On créée la database parc auto
-IF (DB_ID(N'Parc_auto3') IS NULL)
+-- On crÃ©Ã©e la database parc auto
+IF (DB_ID(N'Parc_auto') IS NULL)
     CREATE DATABASE [Parc_auto3]
 
 GO
 
 -- On se positionne sur la base
-USE [Parc_auto3]
+USE [Parc_auto]
 
 GO
 
--- On créée la table modèle du vehicule
+-- On crÃ©Ã©e la table modÃ¨le du vehicule
 IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
@@ -42,7 +42,7 @@ BEGIN
 END
 GO
 
--- On créée la table de la fiche vehicule
+-- On crÃ©Ã©e la table de la fiche vehicule
 IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
@@ -51,19 +51,19 @@ IF NOT EXISTS(
 )
 BEGIN
     CREATE TABLE [dbo].[Vehicule_VEH](
-        [Id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modeleFk] INT NOT NULL,
+        [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
+	[id_modeleFk] INT NOT NULL,
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATE NOT NULL,
-        [kilometre_vehicule] FLOAT NOT NULL,
-		[disponibilite] BIT,
+        [kilometres_vehicule] FLOAT NOT NULL,
+	[disponibilite] BIT,
         
     )
 IF NOT EXISTS (
     SELECT TOP 1 [id_vehicule]
     FROM [dbo].[Vehicule_VEH]
 )
-    INSERT INTO [Parc_auto].[dbo].[vehicule_VEH] ([id_modeleFk], [couleur_vehicule], [premiere_mise_en_circulation], [kilometre_vehicule], [disponibilite])
+    INSERT INTO [Parc_auto].[dbo].[vehicule_VEH] ([id_modeleFk], [couleur_vehicule], [premiere_mise_en_circulation], [kilometres_vehicule], [disponibilite])
     VALUES  (1, N'Rouge', N'2010-09-07', 1200.35, 1),
             (1, N'noire', N'2015-02-25', 1500.3, 1),
 			(2, N'Verte', N'2012-03-15', 2400.83, 1);
@@ -84,12 +84,12 @@ IF NOT EXISTS(
 )
 BEGIN
 	CREATE TABLE [dbo].[Client_CLI](
-        [Id_client] INT IDENTITY(1,1) PRIMARY KEY,
-        [nom_client] NVARCHAR(30) NOT NULL,
-        [prenom_client] NVARCHAR(30) NOT NULL,
-        [adresse_client] NVARCHAR(50) NOT NULL,
-        [telephone_client] INT NOT NULL,
-        [type_permis_client] NVARCHAR(1) NOT NULL, 
+		[id_client] INT IDENTITY(1,1) PRIMARY KEY,
+		[nom_client] NVARCHAR(30) NOT NULL,
+		[prenom_client] NVARCHAR(30) NOT NULL,
+		[adresse_client] NVARCHAR(50) NOT NULL,
+		[telephone_client] INT NOT NULL,
+		[type_permis_client] NVARCHAR(1) NOT NULL, 
     )
 
 	IF NOT EXISTS (
@@ -112,22 +112,22 @@ IF NOT EXISTS(
 )
 BEGIN
 	CREATE TABLE [dbo].[Location_LOC](
-		[Id_location] INT IDENTITY(1,1) PRIMARY KEY,
+		[id_location] INT IDENTITY(1,1) PRIMARY KEY,
 		[id_vehiculeFk] INT NOT NULL,
-        [id_clientFk] INT NOT NULL,
-        [date_debut_location] DATETIME2 NOT NULL,
-        [date_fin_location] DATETIME2 NOT NULL,
-		[kilometre_parcouru] FLOAT NOT NULL,
+		[id_clientFk] INT NOT NULL,
+		[date_debut_location] DATETIME2 NOT NULL,
+		[date_fin_location] DATETIME2 NOT NULL,
+		[kilometres_parcourus] FLOAT NOT NULL,
 		)
 
 	ALTER TABLE [dbo].[Location_LOC]
     ADD CONSTRAINT FK_LOC_vehicule FOREIGN KEY ([id_vehiculeFk])
-    REFERENCES [dbo].[Vehicule_VEH] ([Id_vehicule])
+    REFERENCES [dbo].[Vehicule_VEH] ([id_vehicule])
 
 
 	ALTER TABLE [dbo].[Location_LOC]
     ADD CONSTRAINT FK_LOC_client FOREIGN KEY ([id_clientFk])
-    REFERENCES [dbo].[Client_CLI] ([Id_client])
+    REFERENCES [dbo].[Client_CLI] ([id_client])
 
 END
 
@@ -144,20 +144,20 @@ BEGIN
 		WHERE [id_vehiculeFk] = @VehId
 		)<= GETDATE()
 	BEGIN
-		UPDATE  [dbo].[Vehicule_VEH]
-		SET     [disponibilite] = 0
+		UPDATE [dbo].[Vehicule_VEH]
+		SET [disponibilite] = 0
 		WHERE [Id_vehicule] = @VehId
 	END
 END
 */
 GO
 	ALTER TABLE [dbo].[vehicule_VEH]
-	ADD [kilometre_acquisition] FLOAT
+	ADD [kilometres_acquisition] FLOAT
 	
 GO
 
 	ALTER TABLE [dbo].[vehicule_VEH]
-	DROP COLUMN [kilometre_vehicule]
+	DROP COLUMN [kilometres_vehicule]
 GO
 
 
@@ -173,7 +173,7 @@ SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 
 GO
 
-/**/
+
 IF NOT EXISTS (
 	SELECT TOP 1 [Id_location]
 	FROM [dbo].[Location_LOC]
@@ -200,13 +200,30 @@ GO
 CREATE FUNCTION [dbo].[kilometreId](@ID int) RETURNS INTEGER AS 
 BEGIN
     DECLARE @kilometre int;
-    SELECT @kilometre = SUM([kilometre_parcouru]) 
+    SELECT @kilometre = SUM([kilometres_parcourus]) 
     FROM [dbo].[location_LOC]
     WHERE [location_LOC].[id_vehiculeFk] = @ID;
     
-	SELECT @kilometre = @kilometre + [vehicule_VEH].[kilometre_acquisition]
+	SELECT @kilometre = @kilometre + [vehicule_VEH].[kilometres_acquisition]
 	FROM [dbo].[vehicule_VEH]
 	WHERE [vehicule_VEH].[id_vehicule] = @ID;
 	
 	RETURN(@kilometre)
 END;
+
+GO
+
+CREATE FUNCTION [dbo].[KmDepuisAcquisition](@id_vehicule INT)
+RETURNS FLOAT
+AS
+BEGIN
+    DECLARE @Resultat FLOAT
+
+    SELECT @Resultat = SUM(kilometres_parcourus)
+    FROM [dbo].[location_LOC]
+	WHERE [id_vehicule_fk] = @id_vehicule
+
+    RETURN(@Resultat)
+END
+
+GO
