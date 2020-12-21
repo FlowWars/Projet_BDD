@@ -14,7 +14,7 @@ IF NOT EXISTS(
             AND [xtype] = 'u'
 )
 
-    CREATE TABLE [dbo].[vehicule](
+    CREATE TABLE [dbo].[vehicule_VEH](
         [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATETIME2,
@@ -30,7 +30,7 @@ IF NOT EXISTS(
     WHERE [name] = 'client'
             AND [xtype] = 'u'
 )
-CREATE TABLE [dbo].[client](
+CREATE TABLE [dbo].[client_CLI](
         [id_client] INT IDENTITY(1,1) PRIMARY KEY,
         [nom_client] NVARCHAR(20) NOT NULL,
         [prenom_client] NVARCHAR(20) NOT NULL,
@@ -48,7 +48,7 @@ IF NOT EXISTS(
             AND [xtype] = 'u'
 )
 
-    CREATE TABLE [dbo].[modele](
+    CREATE TABLE [dbo].[modele_MOD](
         [id_modele] INT IDENTITY(1,1) PRIMARY KEY,
         [marque_vehicule] NVARCHAR(20) NOT NULL,
         [modele_vehicule] NVARCHAR(20) NOT NULL,
@@ -71,7 +71,7 @@ GO
             AND [xtype] = 'u'
 )   
 
-	CREATE TABLE [dbo].[location](
+	CREATE TABLE [dbo].[location_LOC](
         [id_location] INT IDENTITY(1,1) PRIMARY KEY,
         [id_vehicule_fk] INT /*clé secondaire */,
         [id_client_fk] INT /*clé secondaire*/,
