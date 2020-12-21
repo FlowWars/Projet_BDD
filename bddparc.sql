@@ -130,7 +130,7 @@ BEGIN
 
 END
 GO
-/*
+
 CREATE OR ALTER TRIGGER [dbo].[trig_new_location]
     ON [dbo].[location_LOC] 
     AFTER INSERT 
@@ -138,30 +138,23 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @VehId INT
+	DECLARE @VehId INT ;
+	SET @VehId = 0;
 
-	IF (SELECT [date_debut_location]
-		FROM [dbo].[Location_LOC]
-		WHERE [id_vehiculeFk] = @VehId
-		)<= GETDATE()
+	WHILE(@VehId < 10)
 	BEGIN
-		UPDATE  [dbo].[Vehicule_VEH]
-		SET     [disponibilite] = 0
-		WHERE [Id_vehicule] = @VehId
+		SET @VehId = @VehId + 1;
+		IF (SELECT [date_debut_location]
+			FROM [dbo].[Location_LOC]
+			WHERE [id_vehiculeFk] = @VehId
+			)<= GETDATE()
+		BEGIN
+			UPDATE  [dbo].[Vehicule_VEH]
+			SET     [disponibilite] = 0
+			WHERE [Id_vehicule] = @VehId 
+		END
 	END
 END
-GO
-*/
-CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
-AS
-	SELECT *
-    FROM [dbo].[Vehicule_VEH] 
-    WHERE [disponibilite]=1
-
-GO
-
-SELECT * FROM [dbo].[VuesDesVehiculeDispo]
-
 GO
 
 /**/
@@ -184,5 +177,17 @@ AS
 GO
 
 SELECT * FROM [dbo].[VehiculeInfo]
+
+GO
+
+CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
+AS
+	SELECT *
+    FROM [dbo].[Vehicule_VEH] 
+    WHERE [disponibilite]=1
+
+GO
+
+SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 
 GO
