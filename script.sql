@@ -1,119 +1,156 @@
-IF(DB_ID(N'parc_auto')IS NULL)
-    CREATE DATABASE [parc_auto]
+-- On créée la database parc auto
+IF (DB_ID(N'Parc_auto3') IS NULL)
+    CREATE DATABASE [Parc_auto3]
 
 GO
 
-USE [parc_auto]
+-- On se positionne sur la base
+USE [Parc_auto3]
 
 GO
 
+-- On créée la table modèle du vehicule
 IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
-    WHERE [name] = 'vehicule_VEH'
-            AND [xtype] = 'u'
+    WHERE [name] = 'Modele_MOD'
+            AND [xtype] = 'U'
 )
+BEGIN
+    CREATE TABLE [dbo].[Modele_MOD](
+        [Id_modele] INT IDENTITY(1,1) PRIMARY KEY,
+        [marque_vehicule] NVARCHAR(20) NOT NULL,
+        [modele_vehicule] NVARCHAR(20) NOT NULL,
+        [poids_vehicule] FLOAT NOT NULL,
+        [puissance_vehicule] INT NOT NULL,
+        [annee_sortie_usine_vehicule] DATE NOT NULL,
+        [type_vehicule] NVARCHAR(15) NOT NULL, 
+        [place_vehicule] TINYINT NOT NULL,-- j'ai pris cette variable car le nombre de place n'a pas de grande valeur
+        [energie_vehicule] NVARCHAR(10) NOT NULL,
+    )
 
-    CREATE TABLE [dbo].[vehicule_VEH](
-        [id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
-		[id_modele_fk] INT,/*clé secondaire*/
+	IF NOT EXISTS (
+		SELECT TOP 1 [Id_modele]
+		FROM [dbo].[Modele_MOD]
+	)
+
+    INSERT INTO [Parc_auto].[dbo].[Modele_MOD] ([marque_vehicule], [modele_vehicule], [poids_vehicule], [puissance_vehicule], [annee_sortie_usine_vehicule],[type_vehicule],[place_vehicule],[energie_vehicule])
+    VALUES  (N'mercedes', N'classe_A', 320, 300, N'2018-10-23', N'sport',4, N'essence'),
+            (N'bmw', N'M5', 280, 240, N'2015-02-17', N'break',4, N'gazole'),
+			(N'renault', N'clio 4', 240, 190, N'2010-12-23', N'sport',4, N'diesel');
+
+END
+GO
+
+-- On créée la table de la fiche vehicule
+IF NOT EXISTS(
+    SELECT [name]
+    FROM [sysobjects]
+    WHERE [name] = 'Vehicule_VEH'
+            AND [xtype] = 'U'
+)
+BEGIN
+    CREATE TABLE [dbo].[Vehicule_VEH](
+        [Id_vehicule] INT IDENTITY(1,1) PRIMARY KEY,
+		[id_modeleFk] INT NOT NULL,
         [couleur_vehicule] NVARCHAR(20) NOT NULL,
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
+		[disponibilite] BIT,
         
     )
+IF NOT EXISTS (
+    SELECT TOP 1 [id_vehicule]
+    FROM [dbo].[Vehicule_VEH]
+)
+    INSERT INTO [Parc_auto].[dbo].[vehicule_VEH] ([id_modeleFk], [couleur_vehicule], [premiere_mise_en_circulation], [kilometre_vehicule], [disponibilite])
+    VALUES  (1, N'Rouge', N'2010-09-07', 1200.35, 1),
+            (1, N'noire', N'2015-02-25', 1500.3, 1),
+			(2, N'Verte', N'2012-03-15', 2400.83, 1);
 
+
+	ALTER TABLE [dbo].[Vehicule_VEH]
+    ADD CONSTRAINT FK_VEH_Modele FOREIGN KEY ([id_modeleFk])
+    REFERENCES [dbo].[Modele_MOD] ([Id_modele])
+
+END
 GO
 
 IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
     WHERE [name] = 'client_CLI'
-            AND [xtype] = 'u'
+            AND [xtype] = 'U'
 )
-CREATE TABLE [dbo].[client_CLI](
-        [id_client] INT IDENTITY(1,1) PRIMARY KEY,
-        [nom_client] NVARCHAR(20) NOT NULL,
-        [prenom_client] NVARCHAR(20) NOT NULL,
+BEGIN
+	CREATE TABLE [dbo].[Client_CLI](
+        [Id_client] INT IDENTITY(1,1) PRIMARY KEY,
+        [nom_client] NVARCHAR(30) NOT NULL,
+        [prenom_client] NVARCHAR(30) NOT NULL,
         [adresse_client] NVARCHAR(50) NOT NULL,
         [telephone_client] INT NOT NULL,
         [type_permis_client] NVARCHAR(1) NOT NULL, 
     )
 
+	IF NOT EXISTS (
+		SELECT TOP 1 [Id_client]
+		FROM [dbo].[Client_CLI]
+	)
+
+    INSERT INTO [Parc_auto].[dbo].[client_CLI] ([nom_client], [prenom_client], [adresse_client], [telephone_client], [type_permis_client])
+    VALUES  (N'Sarkozy', N'Nicolas', N'10 rue du general foy, Amiens 80000', N' 0607080910',N'B'),
+			(N'Holland', N'Francois', N'9 rue du general foy, Amiens 80000', N' 0758962512',N'B');
+
+END
 GO
 
 IF NOT EXISTS(
     SELECT [name]
     FROM [sysobjects]
-    WHERE [name] = 'modele_MOD'
-            AND [xtype] = 'u'
+    WHERE [name] = 'Location_LOC'
+            AND [xtype] = 'U'
 )
-
-    CREATE TABLE [dbo].[modele_MOD](
-        [id_modele] INT IDENTITY(1,1) PRIMARY KEY,
-        [marque_vehicule] NVARCHAR(20) NOT NULL,
-        [modele_vehicule] NVARCHAR(20) NOT NULL,
-        [vitesse_max_vehicule] INT NOT NULL,
-        [poids_vehicule] FLOAT NOT NULL,
-        [puissance_vehicule] INT NOT NULL,
-        [annee_sortie_usine_vehicule] DATE NOT NULL,
-        [type_vehicule] NVARCHAR(15) NOT NULL, 
-        [place_vehicule] INT NOT NULL,
-        [energie_vehicule] NVARCHAR(10) NOT NULL,
-    )
-
-GO
-
-IF NOT EXISTS(
-    SELECT [name]
-    FROM [sysobjects]
-    WHERE [name] = 'location_LOC'
-            AND [xtype] = 'u'
-)   
-
-	CREATE TABLE [dbo].[location_LOC](
-        [id_location] INT IDENTITY(1,1) PRIMARY KEY,
-        [id_vehicule_fk] INT /*clé secondaire */,
-        [id_client_fk] INT /*clé secondaire*/,
-        [date_debut_location] DATETIME2 ,
-        [date_fin_location] DATETIME2,
-        [disponibilite] BIT,
-		[kilometre_parcouru] FLOAT,
- 
-    )
-
-GO
-
-	ALTER TABLE [dbo].[vehicule_VEH]
-	ADD CONSTRAINT FK_VEH_IDMOD FOREIGN KEY([id_modele_fk])
-	REFERENCES [dbo].[modele_MOD]([id_modele])
-GO
-
-	ALTER TABLE [dbo].[location_LOC]
-	ADD CONSTRAINT FK_LOC_VEH FOREIGN KEY([id_vehicule_fk])
-	REFERENCES [dbo].[vehicule_VEH]([id_vehicule])
-GO
-
-	ALTER TABLE [dbo].[location_LOC]
-	ADD CONSTRAINT FK_LOC_CLT FOREIGN KEY([id_client_fk])
-	REFERENCES [dbo].[client_CLI]([id_client])
-
-GO
-
-CREATE OR ALTER TRIGGER [dbo].[trig_debut_location]
-    ON [dbo].[location_LOC] 
-    AFTER UPDATE 
-AS
 BEGIN
-	UPDATE  [dbo].[location_LOC]
-		SET     [disponibilite] = 0
-		WHERE   [date_debut_location] = GETDATE()
+	CREATE TABLE [dbo].[Location_LOC](
+		[Id_location] INT IDENTITY(1,1) PRIMARY KEY,
+		[id_vehiculeFk] INT NOT NULL,
+        [id_clientFk] INT NOT NULL,
+        [date_debut_location] DATETIME2 NOT NULL,
+        [date_fin_location] DATETIME2 NOT NULL,
+		[kilometre_parcouru] FLOAT NOT NULL,
+		)
+
+	ALTER TABLE [dbo].[Location_LOC]
+    ADD CONSTRAINT FK_LOC_vehicule FOREIGN KEY ([id_vehiculeFk])
+    REFERENCES [dbo].[Vehicule_VEH] ([Id_vehicule])
+
+
+	ALTER TABLE [dbo].[Location_LOC]
+    ADD CONSTRAINT FK_LOC_client FOREIGN KEY ([id_clientFk])
+    REFERENCES [dbo].[Client_CLI] ([Id_client])
+
 END
 
+/*
+CREATE OR ALTER TRIGGER [dbo].[trig_new_location]
+    ON [dbo].[location_LOC] 
+    AFTER INSERT 
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @VehId INT
+	IF (SELECT [date_debut_location]
+		FROM [dbo].[Location_LOC]
+		WHERE [id_vehiculeFk] = @VehId
+		)<= GETDATE()
+	BEGIN
+		UPDATE  [dbo].[Vehicule_VEH]
+		SET     [disponibilite] = 0
+		WHERE [Id_vehicule] = @VehId
+	END
+END
+*/
 GO
-
-
-
 	ALTER TABLE [dbo].[vehicule_VEH]
 	ADD [kilometre_acquisition] FLOAT
 	
@@ -121,64 +158,30 @@ GO
 
 	ALTER TABLE [dbo].[vehicule_VEH]
 	DROP COLUMN [kilometre_vehicule]
-
 GO
 
 
-IF NOT EXISTS (
-    SELECT TOP 1 [id_vehicule]
-    FROM [dbo].[vehicule_VEH]
-)
-BEGIN
-    INSERT INTO [parc_auto].[dbo].[vehicule_VEH] ([couleur_vehicule],[id_modele_fk] , [premiere_mise_en_circulation], [kilometre_acquisition])
-	VALUES  (N'Rouge', 2, N'2010-09-07', 1200),
-            (N'Verte', 1, N'2017-02-25', 1500.3)
-
-   
-END
-
-GO
-
-IF NOT EXISTS(
-	SELECT TOP 1 [id_modele]
-	FROM [dbo].[modele_MOD]	
-)
-BEGIN
-	INSERT INTO [parc_auto].[dbo].[modele_MOD] ([marque_vehicule], [modele_vehicule], [vitesse_max_vehicule], [poids_vehicule], [puissance_vehicule], [annee_sortie_usine_vehicule],[type_vehicule],[place_vehicule],[energie_vehicule])
-    VALUES  (N'mercedes', N'classe_A', 320, 1500,300,N'2018-10-23',N'sport',4,N'essence'),
-            (N'bmw', N'M5', 280, 1300,240,N'2015-02-17',N'break',4,N'gazole')
-
-END
-GO
-
-IF NOT EXISTS(
-	SELECT TOP 1 [id_client]
-	FROM [dbo].[client_CLI]	
-)
-BEGIN
-	INSERT INTO [parc_auto].[dbo].[client_CLI] ([nom_client], [prenom_client], [adresse_client], [telephone_client], [type_permis_client])
-    VALUES  (N'Sarkozy', N'Nicolas', N'10 rue du general foy, Amiens 80000', N' 0607080910',N'B'),
-			(N'Holland', N'Francois', N'9 rue du general foy, Amiens 80000', N' 0758962512',N'B')
-           
-END
-
-GO
-IF NOT EXISTS(
-    SELECT TOP 1 [id_location]
-    FROM [dbo].[location_LOC]
-)
-BEGIN
-    INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehicule_fk],[id_client_fk],[date_debut_location],[date_fin_location],[disponibilite])
-    VALUES    (2,3,GETDATE(),GETDATE(),1),
-            (1,2,GETDATE(),GETDATE(),0)
-           
-END
-GO
 CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
 AS
-SELECT * 
-FROM [dbo].[vehicule_VEH]
-WHERE [id_vehicule]!=(SELECT[id_vehicule_fk] FROM [dbo].[location_LOC] WHERE [disponibilite]=0)
+	SELECT *
+    FROM [dbo].[Vehicule_VEH] 
+    WHERE [disponibilite]=1
+
+GO
+
+SELECT * FROM [dbo].[VuesDesVehiculeDispo]
+
+GO
+
+/**/
+IF NOT EXISTS (
+	SELECT TOP 1 [Id_location]
+	FROM [dbo].[Location_LOC]
+)
+
+INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehiculeFk],[id_clientFk],[date_debut_location],[date_fin_location])
+VALUES    (1,1,GETDATE(),GETDATE()),
+           (2,2,GETDATE(),GETDATE());
 
 GO
 
@@ -193,33 +196,13 @@ SELECT * FROM [dbo].[VehiculeInfo]
 
 GO
 
-CREATE OR ALTER VIEW [dbo].[ClientsInfo]
-AS
-    SELECT *
-    FROM [dbo].[client_CLI]
-
 GO
-SELECT * FROM [dbo].[ClientsInfo]
-
-GO
-CREATE OR ALTER VIEW [dbo].[ModeleInfo]
-AS
-    SELECT *
-    FROM [dbo].[modele_MOD]
-
-GO
-
-SELECT * FROM [dbo].[ModeleInfo]
-SELECT * FROM [dbo].[VuesDesVehiculeDispo]
-
-GO
-
 CREATE FUNCTION [dbo].[kilometreId](@ID int) RETURNS INTEGER AS 
 BEGIN
     DECLARE @kilometre int;
     SELECT @kilometre = SUM([kilometre_parcouru]) 
     FROM [dbo].[location_LOC]
-    WHERE [location_LOC].[id_vehicule_fk] = @ID;
+    WHERE [location_LOC].[id_vehiculeFk] = @ID;
     
 	SELECT @kilometre = @kilometre + [vehicule_VEH].[kilometre_acquisition]
 	FROM [dbo].[vehicule_VEH]
