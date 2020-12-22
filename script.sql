@@ -1,11 +1,11 @@
 -- On créée la database parc auto
-IF (DB_ID(N'Parc_auto5') IS NULL)
-    CREATE DATABASE [Parc_auto5]
+IF (DB_ID(N'Parc_auto7') IS NULL)
+    CREATE DATABASE [Parc_auto7]
 
 GO
 
 -- On se positionne sur la base
-USE [Parc_auto5]
+USE [Parc_auto7]
 
 GO
 
@@ -34,7 +34,7 @@ BEGIN
 		FROM [dbo].[Modele_MOD]
 	)
 
-    INSERT INTO [Parc_auto].[dbo].[Modele_MOD] ([marque_vehicule], [modele_vehicule], [poids_vehicule], [puissance_vehicule], [annee_sortie_usine_vehicule],[type_vehicule],[place_vehicule],[energie_vehicule])
+    INSERT INTO [Parc_auto7].[dbo].[Modele_MOD] ([marque_vehicule], [modele_vehicule], [poids_vehicule], [puissance_vehicule], [annee_sortie_usine_vehicule],[type_vehicule],[place_vehicule],[energie_vehicule])
     VALUES  (N'mercedes', N'classe_A', 320, 300, N'2018-10-23', N'sport',4, N'essence'),
             (N'bmw', N'M5', 280, 240, N'2015-02-17', N'break',4, N'gazole'),
 			(N'renault', N'clio 4', 240, 190, N'2010-12-23', N'sport',4, N'diesel');
@@ -57,17 +57,17 @@ BEGIN
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
 		[disponibilite] BIT,
-		[kilometres_parcourus] FLOAT ,
+		[kilometres_acquisition]FLOAT ,
         
     )
 IF NOT EXISTS (
     SELECT TOP 1 [id_vehicule]
     FROM [dbo].[Vehicule_VEH]
 )
-    INSERT INTO [Parc_auto].[dbo].[vehicule_VEH] ([id_modeleFk], [couleur_vehicule], [premiere_mise_en_circulation], [kilometre_vehicule], [disponibilite])
-    VALUES  (1, N'Rouge', N'2010-09-07', 1200.35, 1),
-            (1, N'noire', N'2015-02-25', 1500.3, 1),
-			(2, N'Verte', N'2012-03-15', 2400.83, 1);
+    INSERT INTO [Parc_auto7].[dbo].[vehicule_VEH] ([id_modeleFk], [couleur_vehicule], [premiere_mise_en_circulation], [kilometre_vehicule], [disponibilite],[kilometres_acquisition])
+    VALUES  (1, N'Rouge', N'2010-09-07', 1200.35, 1,2000),
+            (1, N'noire', N'2015-02-25', 1500.3, 1,2500),
+			(2, N'Verte', N'2012-03-15', 2400.83, 1,10000);
 
 
 	ALTER TABLE [dbo].[Vehicule_VEH]
@@ -98,7 +98,7 @@ BEGIN
 		FROM [dbo].[Client_CLI]
 	)
 
-    INSERT INTO [Parc_auto].[dbo].[client_CLI] ([nom_client], [prenom_client], [adresse_client], [telephone_client], [type_permis_client])
+    INSERT INTO [Parc_auto7].[dbo].[client_CLI] ([nom_client], [prenom_client], [adresse_client], [telephone_client], [type_permis_client])
     VALUES  (N'Sarkozy', N'Nicolas', N'10 rue du general foy, Amiens 80000', N' 0607080910',N'B'),
 			(N'Holland', N'Francois', N'9 rue du general foy, Amiens 80000', N' 0758962512',N'B');
 
@@ -165,9 +165,9 @@ IF NOT EXISTS (
 	FROM [dbo].[Location_LOC]
 )
 
-INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehiculeFk],[id_clientFk],[date_debut_location],[date_fin_location])
-VALUES    (1,1,GETDATE(),GETDATE()),
-           (2,2,GETDATE(),GETDATE());
+INSERT INTO[parc_auto7].[dbo].[location_LOC]([id_vehiculeFk],[id_clientFk],[date_debut_location],[date_fin_location],[kilometres_parcourus])
+VALUES    (1,1,GETDATE(),GETDATE(),200),
+           (2,2,GETDATE(),GETDATE(),5000);
 
 GO
 
@@ -194,8 +194,18 @@ SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 
 GO
 
+CREATE FUNCTION [dbo].[kilometreAcquisitionId](@ID INT) RETURNS FLOAT AS
+BEGIN
+	DECLARE @kilometre_acquisition int;
+	SELECT @kilometre_acquisition = [Vehicule_VEH].[kilometres_acquisition]
+	FROM [dbo].[Vehicule_VEH]
+	WHERE [Vehicule_VEH].[Id_vehicule] = @ID;
+
+	RETURN(@kilometre_acquisition)
+END;
+	
 GO
-CREATE FUNCTION [dbo].[kilometreId](@ID int) RETURNS INTEGER AS 
+CREATE FUNCTION [dbo].[kilometreId](@ID INT) RETURNS FLOAT AS 
 BEGIN
     DECLARE @kilometre int;
     SELECT @kilometre = SUM([kilometres_parcourus]) 
