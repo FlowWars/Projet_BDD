@@ -1,11 +1,11 @@
 -- On créée la database parc auto
-IF (DB_ID(N'Parc_auto') IS NULL)
-    CREATE DATABASE [Parc_auto]
+IF (DB_ID(N'Parc_auto5') IS NULL)
+    CREATE DATABASE [Parc_auto5]
 
 GO
 
 -- On se positionne sur la base
-USE [Parc_auto]
+USE [Parc_auto5]
 
 GO
 
@@ -57,6 +57,7 @@ BEGIN
         [premiere_mise_en_circulation] DATE NOT NULL,
         [kilometre_vehicule] FLOAT NOT NULL,
 		[disponibilite] BIT,
+		[kilometres_parcourus] FLOAT ,
         
     )
 IF NOT EXISTS (
@@ -117,6 +118,7 @@ BEGIN
         [id_clientFk] INT NOT NULL,
         [date_debut_location] DATETIME2 NOT NULL,
         [date_fin_location] DATETIME2 NOT NULL,
+		[kilometres_parcourus] FLOAT,
 		)
 
 	ALTER TABLE [dbo].[Location_LOC]
