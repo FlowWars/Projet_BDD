@@ -234,4 +234,4 @@ BEGIN
     RETURN(@Resultat)
 END
 
-GO
+
