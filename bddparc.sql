@@ -139,9 +139,13 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @VehId INT ;
+	DECLARE @Nb INT;
 	SET @VehId = 0;
+	SET @Nb = (SELECT COUNT(*)
+				FROM [dbo].[Location_LOC]
+				);
 
-	WHILE(@VehId < 10)
+	WHILE(@VehId <= @Nb)
 	BEGIN
 		SET @VehId = @VehId + 1;
 		IF (SELECT [date_debut_location]
@@ -157,22 +161,56 @@ BEGIN
 END
 GO
 
+ALTER TABLE [dbo].[Location_LOC]
+ADD [kilometres_parcourus] FLOAT NOT NULL
+CONSTRAINT KmDefaut DEFAULT 0
+
+GO
 /**/
+CREATE OR ALTER FUNCTION [dbo].[KmEffectuer](@id_veh int, @DateDebut Datetime2, @DateFin Datetime2)
+RETURNS FLOAT
+AS
+BEGIN
+	DECLARE @KmAcquis FLOAT
+
+    SELECT @KmAcquis = SUM([kilometres_parcourus])
+    FROM [dbo].[Location_LOC] 
+    WHERE [date_debut_location] >= @DateDebut 
+    AND [date_debut_location] < @DateFin
+    AND  [date_fin_location] <= @DateFin
+    AND [date_fin_location] > @DateDebut
+    AND [id_vehiculeFk] = @id_veh
+
+	RETURN(@KmAcquis)
+
+END
+GO
+
+
+
 IF NOT EXISTS (
 	SELECT TOP 1 [Id_location]
 	FROM [dbo].[Location_LOC]
 )
 
-INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehiculeFk],[id_clientFk],[date_debut_location],[date_fin_location])
-VALUES    (1,1,GETDATE(),GETDATE()),
-           (2,2,GETDATE(),GETDATE());
+INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehiculeFk],[id_clientFk],[date_debut_location],[date_fin_location],[kilometres_parcourus])
+VALUES    (1,1,GETDATE(),GETDATE(),100),
+           (2,2,GETDATE(),GETDATE(),50);
 
 GO
 
+
+SELECT [dbo].[KmEffectuer](1,'2010-01-01','2030-01-01') AS 'Km effectué entre 2 périodes'
+
+GO
+
+
+
+/*
 CREATE OR ALTER VIEW [dbo].[VehiculeInfo]
 AS
     SELECT *
-    FROM [dbo].[vehicule_VEH]
+    FROM [dbo].[Vehicule_VEH]
 
 GO
 
@@ -191,3 +229,4 @@ GO
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 
 GO
+*/
