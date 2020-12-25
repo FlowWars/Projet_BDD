@@ -204,9 +204,6 @@ SELECT [dbo].[KmEffectuer](1,'2010-01-01','2030-01-01') AS 'Km effectué entre 2 
 
 GO
 
-
-
-/*
 CREATE OR ALTER VIEW [dbo].[VehiculeInfo]
 AS
     SELECT *
@@ -229,4 +226,17 @@ GO
 SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 
 GO
-*/
+
+CREATE OR ALTER PROCEDURE VehiculeDispoOrNot
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @vehicule_dispo INTEGER
+
+	SELECT @vehicule_dipo = [Vehicule_VEH].[Id_vehicule]
+	FROM [Vehicule_VEH]
+	WHERE [Vehicule_VEH].[Id_vehicule] = (SELECT([Location_LOC].[id_vehiculeFk] FROM [Location_LOC] WHERE [Location_LOC].[date_debut_location] = GETDATE() );
+	
+
+
+END

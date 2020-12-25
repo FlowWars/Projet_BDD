@@ -194,7 +194,7 @@ SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 
 GO
 
-CREATE FUNCTION [dbo].[kilometreAcquisitionId](@ID INT) RETURNS FLOAT AS
+CREATE OR ALTER FUNCTION [dbo].[kilometreAcquisitionId](@ID INT) RETURNS FLOAT AS
 BEGIN
 	DECLARE @kilometre_acquisition int;
 	SELECT @kilometre_acquisition = [Vehicule_VEH].[kilometres_acquisition]
@@ -205,7 +205,7 @@ BEGIN
 END;
 	
 GO
-CREATE FUNCTION [dbo].[kilometreId](@ID INT) RETURNS FLOAT AS 
+CREATE OR ALTER FUNCTION [dbo].[kilometreId](@ID INT) RETURNS FLOAT AS 
 BEGIN
     DECLARE @kilometre int;
     SELECT @kilometre = SUM([kilometres_parcourus]) 
@@ -221,7 +221,7 @@ END;
 
 GO
 
-CREATE FUNCTION [dbo].[KmDepuisAcquisition](@id_vehicule INT)
+CREATE OR ALTER FUNCTION [dbo].[KmDepuisAcquisition](@id_vehicule INT)
 RETURNS FLOAT
 AS
 BEGIN
@@ -234,4 +234,88 @@ BEGIN
     RETURN(@Resultat)
 END
 
+GO
 
+CREATE OR ALTER FUNCTION [dbo].[KmEffectuer](@id_veh int, @DateDebut Datetime2, @DateFin Datetime2)
+RETURNS FLOAT
+AS
+BEGIN
+	DECLARE @KmAcquis FLOAT
+
+    SELECT @KmAcquis = SUM([kilometres_parcourus])
+    FROM [dbo].[Location_LOC] 
+    WHERE [date_debut_location] >= @DateDebut 
+    AND [date_debut_location] < @DateFin
+    AND  [date_fin_location] <= @DateFin
+    AND [date_fin_location] > @DateDebut
+    AND [id_vehiculeFk] = @id_veh
+
+	RETURN(@KmAcquis)
+
+END
+
+GO
+
+IF NOT EXISTS (
+	SELECT TOP 1 [Id_location]
+	FROM [dbo].[Location_LOC]
+)
+
+INSERT INTO[parc_auto].[dbo].[location_LOC]([id_vehiculeFk],[id_clientFk],[date_debut_location],[date_fin_location],[kilometres_parcourus])
+VALUES    (1,1,GETDATE(),GETDATE(),100),
+           (2,2,GETDATE(),GETDATE(),50);
+
+GO
+
+
+SELECT [dbo].[KmEffectuer](1,'2010-01-01','2030-01-01') AS 'Km effectué entre 2 périodes'
+
+GO
+
+CREATE OR ALTER VIEW [dbo].[VehiculeInfo]
+AS
+    SELECT *
+    FROM [dbo].[Vehicule_VEH]
+
+GO
+
+SELECT * FROM [dbo].[VehiculeInfo]
+
+GO
+
+CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
+AS
+	SELECT *
+    FROM [dbo].[Vehicule_VEH] 
+    WHERE [disponibilite]=1
+
+GO
+
+SELECT * FROM [dbo].[VuesDesVehiculeDispo]
+
+GO
+CREATE OR ALTER PROCEDURE VehiculeDispoOrNot
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @vehicule_dispo INTEGER
+	DECLARE @vehicule_non_dispo INTEGER
+
+	SELECT @vehicule_dispo = [Vehicule_VEH].[Id_vehicule]
+	FROM [dbo].[Vehicule_VEH], [dbo].[Location_LOC]
+	WHERE [Vehicule_VEH].[Id_vehicule] = [Location_LOC].[id_vehiculeFk] AND 
+		[Location_LOC].[date_fin_location] = GETDATE() - 1 AND [Location_LOC].[date_debut_location] != GETDATE() ;
+
+	UPDATE  [dbo].[Vehicule_VEH]
+	SET [disponibilite] = 1
+	WHERE [Id_vehicule] = @vehicule_dispo 
+
+	SELECT @vehicule_non_dispo = [Vehicule_VEH].[Id_vehicule]
+	FROM [dbo].[Vehicule_VEH], [dbo].[Location_LOC]
+	WHERE [Vehicule_VEH].[Id_vehicule] = [Location_LOC].[id_vehiculeFk] AND 
+		[Location_LOC].[date_debut_location] = GETDATE();
+
+	UPDATE  [dbo].[Vehicule_VEH]
+	SET [disponibilite] = 0
+	WHERE [Id_vehicule] = @vehicule_non_dispo 
+END
