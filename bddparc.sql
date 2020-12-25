@@ -204,16 +204,7 @@ SELECT [dbo].[KmEffectuer](1,'2010-01-01','2030-01-01') AS 'Km effectué entre 2 
 
 GO
 
-CREATE OR ALTER VIEW [dbo].[VehiculeInfo]
-AS
-    SELECT *
-    FROM [dbo].[Vehicule_VEH]
 
-GO
-
-SELECT * FROM [dbo].[VehiculeInfo]
-
-GO
 
 CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
 AS
@@ -232,11 +223,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	DECLARE @vehicule_dispo INTEGER
+	DECLARE @vehicule_non_dispo INTEGER
 
-	SELECT @vehicule_dipo = [Vehicule_VEH].[Id_vehicule]
-	FROM [Vehicule_VEH]
-	WHERE [Vehicule_VEH].[Id_vehicule] = (SELECT([Location_LOC].[id_vehiculeFk] FROM [Location_LOC] WHERE [Location_LOC].[date_debut_location] = GETDATE() );
-	
+	BEGIN TRY
+		SELECT @vehicule_dispo = [Vehicule_VEH].[Id_vehicule]
+		FROM [dbo].[Vehicule_VEH], [dbo].[Location_LOC]
+		WHERE [Vehicule_VEH].[Id_vehicule] = [Location_LOC].[id_vehiculeFk] AND 
+		[Location_LOC].[date_fin_location] = GETDATE() - 1 AND [Location_LOC].[date_debut_location] != GETDATE() ;
 
+		UPDATE  [dbo].[Vehicule_VEH]
+		SET [disponibilite] = 1
+		WHERE [Id_vehicule] = @vehicule_dispo 
 
+		SELECT @vehicule_non_dispo = [Vehicule_VEH].[Id_vehicule]
+		FROM [dbo].[Vehicule_VEH], [dbo].[Location_LOC]
+		WHERE [Vehicule_VEH].[Id_vehicule] = [Location_LOC].[id_vehiculeFk] AND 
+		[Location_LOC].[date_debut_location] = GETDATE();
+
+		UPDATE  [dbo].[Vehicule_VEH]
+		SET [disponibilite] = 0
+		WHERE [Id_vehicule] = @vehicule_non_dispo
+
+		SELECT 53000 AS [Number], N'ERREUR' AS [Message]
+	END TRY
+
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS [Number], ERROR_MESSAGE() AS [Message]
+	END CATCH
 END
+
+GO
