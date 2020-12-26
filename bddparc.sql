@@ -165,6 +165,14 @@ ALTER TABLE [dbo].[Location_LOC]
 ADD [kilometres_parcourus] FLOAT NOT NULL
 CONSTRAINT KmDefaut DEFAULT 0
 
+ALTER TABLE [dbo].[Vehicule_VEH]
+DROP COLUMN [kilometre_vehicule]
+
+ALTER TABLE [dbo].[Vehicule_VEH]
+ADD [kilometres_acquisition] FLOAT NOT NULL
+CONSTRAINT KmAcquisDefault DEFAULT 0
+
+
 GO
 /**/
 CREATE OR ALTER FUNCTION [dbo].[KmEffectuer](@id_veh int, @DateDebut Datetime2, @DateFin Datetime2)
@@ -186,7 +194,47 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER FUNCTION [dbo].[kilometreAcquisitionId](@ID INT) RETURNS FLOAT AS
+BEGIN
+	DECLARE @kilometre_acquisition FLOAT;
+	SELECT @kilometre_acquisition = [Vehicule_VEH].[kilometres_acquisition]
+	FROM [dbo].[Vehicule_VEH]
+	WHERE [Vehicule_VEH].[Id_vehicule] = @ID;
 
+	RETURN(@kilometre_acquisition)
+END
+GO
+
+CREATE OR ALTER FUNCTION [dbo].[kilometreId](@ID INT) RETURNS FLOAT AS 
+BEGIN
+    DECLARE @kilometre int;
+    SELECT @kilometre = SUM([kilometres_parcourus]) 
+    FROM [dbo].[Location_LOC]
+    WHERE [Location_LOC].[id_vehiculeFk] = @ID;
+    
+	SELECT @kilometre = @kilometre + [Vehicule_VEH].[kilometres_acquisition]
+	FROM [dbo].[Vehicule_VEH]
+	WHERE [Vehicule_VEH].[id_vehicule] = @ID;
+	
+	RETURN(@kilometre)
+END
+
+GO
+
+CREATE OR ALTER FUNCTION [dbo].[KmDepuisAcquisition](@id_vehicule INT)
+RETURNS FLOAT
+AS
+BEGIN
+    DECLARE @Resultat FLOAT
+
+    SELECT @Resultat = SUM([kilometres_parcourus])
+    FROM [dbo].[location_LOC]
+	WHERE [id_vehiculeFK] = @id_vehicule
+
+    RETURN(@Resultat)
+END
+
+GO
 
 IF NOT EXISTS (
 	SELECT TOP 1 [Id_location]
@@ -199,12 +247,9 @@ VALUES    (1,1,GETDATE(),GETDATE(),100),
 
 GO
 
-
 SELECT [dbo].[KmEffectuer](1,'2010-01-01','2030-01-01') AS 'Km effectué entre 2 périodes'
 
 GO
-
-
 
 CREATE OR ALTER VIEW [dbo].[VuesDesVehiculeDispo]
 AS
