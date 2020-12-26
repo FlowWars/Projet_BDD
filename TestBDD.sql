@@ -82,3 +82,5 @@ SELECT * FROM [dbo].[VuesDesVehiculeDispo]
 GO
 
 --On test la procédure
+
+EXEC [dbo].[VehiculeDispoOrNot]
